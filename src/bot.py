@@ -48,6 +48,9 @@ SYSTEM_PROMPT = """
 
 **Your goal is to make the user feel supported, heard, and empowered to accomplish their tasks.**
 """
+MAX_CONTEXT_LENGHT: int = 100_000
+
+user_history: list[dict[str, t.Any]] = []
 
 
 @dp.message(Command('start'))
@@ -120,8 +123,9 @@ async def request_to_llm(message: Message):
         return chunks
     
     try:
+        # user_history.append({"role": "user", "content": user_request})
         response = requests.post(
-            url, 
+            url,
             headers={"Content-Type": "application/json; charset=utf-8"},
             json={
                 # "model": "tinyllama",
@@ -131,7 +135,7 @@ async def request_to_llm(message: Message):
                     # {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_request}
                 ],
-                "max_tokens": 6_000,
+                "max_tokens": 10_000,
                 "stream": True
             },
             stream=True,
